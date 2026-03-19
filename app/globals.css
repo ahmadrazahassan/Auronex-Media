@@ -7,7 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-work-sans);
+  --font-display: var(--font-raleway);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -123,7 +124,45 @@
   body {
     @apply bg-background text-foreground;
   }
-  html {
-    @apply font-sans;
-  }
+}
+
+/* Article Content Styles */
+.article-content h2 {
+  @apply font-display font-bold text-3xl mt-12 mb-4 text-[#0d1619];
+}
+.article-content h3 {
+  @apply font-display font-bold text-2xl mt-8 mb-3 text-[#0d1619];
+}
+.article-content p {
+  @apply font-sans font-normal text-lg leading-relaxed mb-5 text-[#0d1619];
+}
+.article-content ul {
+  @apply font-sans font-normal text-lg list-disc pl-6 mb-5 text-[#0d1619];
+}
+.article-content ol {
+  @apply font-sans font-normal text-lg list-decimal pl-6 mb-5 text-[#0d1619];
+}
+.article-content li {
+  @apply mb-3;
+}
+.article-content table {
+  @apply w-full border-collapse bg-white rounded-xl overflow-hidden border border-[#E2DFD8] mb-8;
+}
+.article-content th {
+  @apply bg-[#F0EFEB] font-sans font-semibold text-sm text-left px-4 py-3 text-[#0d1619];
+}
+.article-content td {
+  @apply font-sans font-normal text-sm px-4 py-3 border-t border-[#E2DFD8] text-[#0d1619];
+}
+.article-content blockquote {
+  @apply border-l-4 border-[#037aff] bg-[#F0EFEB] pl-6 py-4 my-6 font-sans italic text-lg text-[#0d1619];
+}
+.article-content .highlight {
+  @apply border-l-4 border-[#037aff] bg-[#EBF4FF] p-5 my-6 rounded-r-xl;
+}
+.article-content code {
+  @apply bg-[#F0EFEB] rounded-lg px-1.5 py-0.5 font-sans text-sm text-[#0d1619];
+}
+.article-content a {
+  @apply text-[#037aff] underline hover:text-[#0260CC] transition-colors;
 }
