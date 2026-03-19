@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 import { getArticleByCategoryAndSlug, getRelatedArticles } from "@/lib/queries";
 import { formatDate } from "@/lib/utils";
 import { CategoryPill } from "@/components/shared/CategoryPill";
@@ -24,7 +24,15 @@ export default async function ArticlePage({
     ? await getRelatedArticles(article.category_id, article.id, 3)
     : [];
 
-  const safeHtml = DOMPurify.sanitize(article.content || "");
+  const safeHtml = sanitizeHtml(article.content || "", {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'iframe']),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      'img': ['src', 'alt', 'width', 'height'],
+      'iframe': ['src', 'width', 'height', 'allowfullscreen', 'frameborder'],
+      '*': ['class', 'style', 'id']
+    }
+  });
   const category = article.category ?? { name: "Uncategorised", slug: categorySlug };
 
   return (
