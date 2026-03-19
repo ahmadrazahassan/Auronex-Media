@@ -17,13 +17,22 @@ export default async function AdminSettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="rounded-[26px] border border-white/80 bg-[#F3EFE8] p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)]">
+        <div className="rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
           <h2 className="font-display font-bold text-xl text-[#0d1619] mb-5">Environment Status</h2>
           <div className="flex flex-col gap-3">
             {envChecks.map((item) => (
-              <div key={item.label} className="flex items-center justify-between rounded-2xl border border-white/80 bg-white/75 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+              <div
+                key={item.label}
+                className="flex items-center justify-between rounded-2xl border border-white/70 bg-white/50 backdrop-blur-xl px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]"
+              >
                 <span className="text-sm text-[#0d1619] font-medium">{item.label}</span>
-                <span className={`rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${item.ok ? "border border-[#DDEAFE] bg-[#F6F9FF] text-[#037aff]" : "border border-red-200 bg-red-50 text-red-600"}`}>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap backdrop-blur-xl ${
+                    item.ok
+                      ? "border border-[#DDEAFE] bg-white/50 text-[#037aff]"
+                      : "border border-red-200 bg-white/50 text-red-600"
+                  }`}
+                >
                   {item.ok ? "Configured" : "Missing"}
                 </span>
               </div>
@@ -31,22 +40,22 @@ export default async function AdminSettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-[26px] border border-white/80 bg-[#F3EFE8] p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)]">
+        <div className="rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
           <h2 className="font-display font-bold text-xl text-[#0d1619] mb-5">Editorial System</h2>
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-white/80 bg-white/75 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+            <div className="rounded-2xl border border-white/70 bg-white/50 backdrop-blur-xl p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7A838B]">Published</p>
               <p className="mt-2 font-display text-3xl font-bold text-[#0d1619]">{stats.publishedCount}</p>
             </div>
-            <div className="rounded-2xl border border-white/80 bg-white/75 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+            <div className="rounded-2xl border border-white/70 bg-white/50 backdrop-blur-xl p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7A838B]">Drafts</p>
               <p className="mt-2 font-display text-3xl font-bold text-[#0d1619]">{stats.draftCount}</p>
             </div>
-            <div className="rounded-2xl border border-white/80 bg-white/75 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+            <div className="rounded-2xl border border-white/70 bg-white/50 backdrop-blur-xl p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7A838B]">Categories</p>
               <p className="mt-2 font-display text-3xl font-bold text-[#0d1619]">{stats.categoryCount}</p>
             </div>
-            <div className="rounded-2xl border border-white/80 bg-white/75 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+            <div className="rounded-2xl border border-white/70 bg-white/50 backdrop-blur-xl p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7A838B]">Subscribers</p>
               <p className="mt-2 font-display text-3xl font-bold text-[#0d1619]">{stats.subscriberCount}</p>
             </div>

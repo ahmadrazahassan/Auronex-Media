@@ -31,6 +31,11 @@ export default async function ArticlePage({
       'img': ['src', 'alt', 'width', 'height'],
       'iframe': ['src', 'width', 'height', 'allowfullscreen', 'frameborder'],
       '*': ['class', 'style', 'id']
+    },
+    allowedSchemesByTag: {
+      // Allow pasted/uploaded images embedded as `data:image/...` URLs.
+      img: ['data', 'http', 'https'],
+      iframe: ['http', 'https']
     }
   });
   const category = article.category ?? { name: "Uncategorised", slug: categorySlug };

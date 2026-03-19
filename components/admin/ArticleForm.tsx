@@ -1,14 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/lib/constants";
 import { toast } from "sonner";
 import { ArticleEditor } from "./ArticleEditor";
 
-export function ArticleForm({ initialData = null }: { initialData?: any }) {
+type ArticleFormInitialData = {
+  id?: string | number;
+  title?: string | null;
+  excerpt?: string | null;
+  content?: string | null;
+  category?: { slug?: string } | null;
+  featured?: boolean;
+  author_name?: string | null;
+  thumbnail_url?: string | null;
+  tags?: Array<{ name: string }> | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  published_at?: string | null;
+};
+
+export function ArticleForm({ initialData = null }: { initialData?: ArticleFormInitialData | null }) {
   const router = useRouter();
   const [title, setTitle] = useState(initialData?.title || "");
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || "");
@@ -22,34 +36,6 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
   const [metaDescription, setMetaDescription] = useState(initialData?.meta_description || "");
   const [publishedAt, setPublishedAt] = useState(initialData?.published_at ? new Date(initialData.published_at).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16));
   const [loading, setLoading] = useState<"draft" | "published" | null>(null);
-  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
-
-  async function handleThumbnailUpload(file: File) {
-    setUploadingThumbnail(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("/api/admin/upload-thumbnail", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        toast.error(result.error || "Unable to upload thumbnail.");
-        setUploadingThumbnail(false);
-        return;
-      }
-
-      setThumbnailUrl(result.url);
-      toast.success("Thumbnail uploaded.");
-    } catch {
-      toast.error("Unable to upload thumbnail.");
-    } finally {
-      setUploadingThumbnail(false);
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent, status: "draft" | "published") => {
     e.preventDefault();
@@ -101,7 +87,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
 
   return (
     <form onSubmit={(e) => handleSubmit(e, "published")} className="flex flex-col gap-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 rounded-[26px] border border-white/80 bg-[#F3EFE8] p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
         <div>
           <h2 className="font-display font-bold text-xl text-[#0d1619]">
             {initialData ? "Edit Article" : "New Article"}
@@ -111,26 +97,32 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
           </p>
         </div>
         <div className="flex gap-3">
-          <button type="button" disabled={loading !== null} onClick={(e) => handleSubmit(e, "draft")} className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-[14px] border border-[#D9D4CB] bg-white px-5 text-[15px] font-medium text-[#0d1619] shadow-[0_1px_2px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all hover:border-[#CFC8BD] hover:bg-[#FDFCFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#037aff]/20 disabled:opacity-50 active:translate-y-[1px]">
+          <Button
+            type="button"
+            disabled={loading !== null}
+            variant="secondary"
+            className="h-10 px-5"
+            onClick={(e) => handleSubmit(e, "draft")}
+          >
             Save Draft
-          </button>
-          <button type="submit" disabled={loading !== null} className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-[14px] bg-[#037aff] px-5 text-[15px] font-medium text-white shadow-[0_4px_14px_rgba(3,122,255,0.25),inset_0_1px_0_rgba(255,255,255,0.25)] transition-all hover:bg-[#0266D6] hover:shadow-[0_6px_20px_rgba(3,122,255,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#037aff]/20 disabled:opacity-50 active:translate-y-[1px]">
+          </Button>
+          <Button type="submit" disabled={loading !== null} className="h-10 px-5">
             {loading === "published" ? "Publishing..." : "Publish"}
-          </button>
+          </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content Area */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="flex flex-col gap-4 rounded-[26px] border border-white/80 bg-[#F3EFE8] p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)]">
+          <div className="flex flex-col gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-[#0d1619]">Title</label>
               <input 
                 type="text" 
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-lg font-display shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-lg font-display shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
                 placeholder="Enter article title..."
                 required
               />
@@ -142,7 +134,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 rows={3}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
                 placeholder="2-3 sentence summary..."
               />
             </div>
@@ -153,15 +145,15 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                 type="text"
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
                 placeholder="Editorial Team"
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 rounded-[26px] border border-white/80 bg-[#F3EFE8] p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)] min-h-[500px]">
+          <div className="flex flex-col gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)] min-h-[500px]">
             <label className="text-sm font-medium text-[#0d1619]">Content</label>
-            <div className="flex-grow rounded-2xl border border-white/80 bg-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition-all focus-within:border-[#037aff] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#037aff]/10 overflow-hidden">
+            <div className="flex-grow rounded-2xl border border-white/70 bg-white/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition-all focus-within:border-[#037aff] focus-within:bg-white/60 focus-within:ring-4 focus-within:ring-[#037aff]/10 overflow-hidden backdrop-blur-xl">
               <ArticleEditor content={content} onChange={setContent} />
             </div>
           </div>
@@ -169,11 +161,11 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
 
         {/* Sidebar Settings */}
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-4 rounded-[26px] border border-white/80 bg-[#F3EFE8] p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)]">
+          <div className="flex flex-col gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
             <h3 className="font-display font-bold text-[#0d1619]">Settings</h3>
             
-            <div className="flex items-center gap-3 pb-3 border-b border-white/80">
-              <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-5 w-5 rounded-md border-[#D9D4CB] text-[#037aff] focus:ring-[#037aff] focus:ring-offset-0" />
+            <div className="flex items-center gap-3 pb-3 border-b border-white/70">
+              <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-5 w-5 rounded-md border-white/70 bg-white/50 text-[#037aff] focus:ring-[#037aff] focus:ring-offset-0 backdrop-blur-xl" />
               <label htmlFor="featured" className="text-sm font-medium text-[#0d1619] cursor-pointer">Feature this article</label>
             </div>
 
@@ -183,7 +175,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                 type="datetime-local" 
                 value={publishedAt}
                 onChange={(e) => setPublishedAt(e.target.value)}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
               />
             </div>
             
@@ -192,7 +184,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
               <select 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all appearance-none focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all appearance-none focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
               >
                 {CATEGORIES.map(cat => (
                   <option key={cat.slug} value={cat.slug}>{cat.name}</option>
@@ -207,38 +199,13 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                   type="text"
                   value={thumbnailUrl}
                   onChange={(e) => setThumbnailUrl(e.target.value)}
-                  className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                  className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
                   placeholder="https://example.com/image.png"
                 />
-                
-                <div className="text-center">
-                  <span className="text-xs font-medium uppercase tracking-wider text-[#A0A8B0]">OR UPLOAD FILE</span>
-                </div>
-
-                <label className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-[#D9D4CB] bg-white/50 p-6 text-center transition-colors hover:bg-white">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#A0A8B0]">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" x2="12" y1="3" y2="15" />
-                  </svg>
-                  <span className="text-sm font-medium text-[#5A6269] mt-2">{uploadingThumbnail ? "Uploading..." : "Click to upload"}</span>
-                  <span className="text-xs text-[#A0A8B0]">SVG, PNG, JPG or GIF</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        void handleThumbnailUpload(file);
-                      }
-                    }}
-                  />
-                </label>
               </div>
               
               {thumbnailUrl ? (
-                <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-[#D9D4CB] mt-2 bg-[#F0EFEB]">
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/70 mt-2 bg-white/50 backdrop-blur-xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={thumbnailUrl} 
@@ -259,7 +226,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                 type="text"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
                 placeholder="tax, payroll, software"
               />
               <span className="text-xs text-[#5A6269]">Separate tags with commas.</span>
@@ -271,7 +238,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                 type="text"
                 value={metaTitle}
                 onChange={(e) => setMetaTitle(e.target.value)}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
                 placeholder="SEO title override"
               />
             </div>
@@ -282,7 +249,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                 value={metaDescription}
                 onChange={(e) => setMetaDescription(e.target.value)}
                 rows={4}
-                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
                 placeholder="SEO description override"
               />
             </div>

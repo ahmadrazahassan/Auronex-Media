@@ -86,25 +86,25 @@ export function AdminCategoriesManager({ categories }: { categories: Category[] 
 
   return (
     <div className="flex flex-col gap-6">
-      <form onSubmit={handleCreate} className="bg-white rounded-2xl border border-[#E2DFD8] p-6 shadow-sm grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-4 items-end">
+      <form onSubmit={handleCreate} className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/70 p-6 shadow-sm grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-4 items-end">
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-[#0d1619]">Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} className="bg-white border border-[#E2DFD8] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff]" required />
+          <input value={name} onChange={(e) => setName(e.target.value)} className="bg-white/50 border border-white/70 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff] backdrop-blur-xl" required />
         </div>
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-[#0d1619]">Description</label>
-          <input value={description} onChange={(e) => setDescription(e.target.value)} className="bg-white border border-[#E2DFD8] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff]" />
+          <input value={description} onChange={(e) => setDescription(e.target.value)} className="bg-white/50 border border-white/70 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff] backdrop-blur-xl" />
         </div>
-        <button type="submit" disabled={loading} className="inline-flex h-[42px] items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#037aff] px-5 text-[14px] font-medium text-white shadow-[0_2px_10px_rgba(3,122,255,0.2),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all hover:bg-[#0266D6] hover:shadow-[0_4px_16px_rgba(3,122,255,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#037aff]/20 disabled:opacity-50 active:translate-y-[1px]">
+        <Button type="submit" disabled={loading} className="h-[42px] rounded-[14px]">
           {loading ? "Adding..." : "Add Category"}
-        </button>
+        </Button>
       </form>
 
-      <div className="overflow-hidden rounded-[26px] border border-white/80 bg-[#F3EFE8] shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)]">
+      <div className="overflow-hidden rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/80 bg-white/60">
+              <tr className="border-b border-white/70 bg-white/60 backdrop-blur-xl">
                 <th className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#7A838B]">Name</th>
                 <th className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#7A838B]">Slug</th>
                 <th className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#7A838B]">Description</th>
@@ -116,7 +116,7 @@ export function AdminCategoriesManager({ categories }: { categories: Category[] 
                 <tr key={category.id} className="transition-colors hover:bg-white/45">
                   <td className="px-6 py-4 text-sm font-medium text-[#0d1619]">{category.name}</td>
                   <td className="px-6 py-4">
-                    <span className="rounded-full border border-[#DDEAFE] bg-[#F6F9FF] px-2.5 py-1 text-xs font-medium whitespace-nowrap text-[#037aff]">
+                    <span className="rounded-full border border-white/70 bg-white/50 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-[#037aff] backdrop-blur-xl">
                       {category.slug}
                     </span>
                   </td>
@@ -130,12 +130,12 @@ export function AdminCategoriesManager({ categories }: { categories: Category[] 
                           setEditName(category.name);
                           setEditDescription(category.description || "");
                         }}
-                        className="p-2 text-[#5A6269] hover:text-[#037aff] hover:bg-[#EBF4FF] rounded-lg transition-colors"
+                        className="p-2 text-[#5A6269] hover:text-[#037aff] hover:bg-white/60 rounded-lg transition-colors backdrop-blur-xl"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <Dialog open={deletingCategoryId === category.id} onOpenChange={(open) => setDeletingCategoryId(open ? category.id : null)}>
-                        <DialogTrigger render={<button type="button" className="p-2 text-[#5A6269] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" />}>
+                        <DialogTrigger render={<button type="button" className="p-2 text-[#5A6269] hover:text-red-600 hover:bg-white/60 rounded-lg transition-colors backdrop-blur-xl" />}>
                           <Trash2 className="w-4 h-4" />
                         </DialogTrigger>
                         <DialogContent>
@@ -149,7 +149,7 @@ export function AdminCategoriesManager({ categories }: { categories: Category[] 
                             <Button type="button" variant="outline" onClick={() => setDeletingCategoryId(null)}>
                               Cancel
                             </Button>
-                            <Button type="button" onClick={() => handleDelete(category.id)} className="bg-red-600 hover:bg-red-700 text-white">
+                            <Button type="button" onClick={() => handleDelete(category.id)} variant="destructive">
                               Delete
                             </Button>
                           </DialogFooter>
@@ -176,18 +176,18 @@ export function AdminCategoriesManager({ categories }: { categories: Category[] 
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-[#0d1619]">Name</label>
-              <input value={editName} onChange={(e) => setEditName(e.target.value)} className="bg-white border border-[#E2DFD8] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff]" required />
+              <input value={editName} onChange={(e) => setEditName(e.target.value)} className="bg-white/50 border border-white/70 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff] backdrop-blur-xl" required />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-[#0d1619]">Description</label>
-              <input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="bg-white border border-[#E2DFD8] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff]" />
+              <input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="bg-white/50 border border-white/70 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#037aff]/20 focus:border-[#037aff] backdrop-blur-xl" />
             </div>
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setEditingCategory(null)}>
                 Cancel
               </Button>
-              <Button type="submit" className="bg-[#037aff] hover:bg-[#0260CC] text-white">
+              <Button type="submit">
                 Save changes
               </Button>
             </DialogFooter>

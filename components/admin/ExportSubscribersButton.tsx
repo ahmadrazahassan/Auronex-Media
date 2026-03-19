@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import type { Subscriber } from "@/types";
+import { Button } from "@/components/ui/button";
 
 export function ExportSubscribersButton({ subscribers }: { subscribers: Subscriber[] }) {
   function handleExport() {
@@ -25,8 +26,8 @@ export function ExportSubscribersButton({ subscribers }: { subscribers: Subscrib
   }
 
   return (
-    <button type="button" onClick={handleExport} className="inline-flex h-[42px] items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D9D4CB] bg-white px-5 text-[14px] font-medium text-[#0d1619] shadow-[0_1px_2px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all hover:border-[#CFC8BD] hover:bg-[#FDFCFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#037aff]/20 active:translate-y-[1px]">
+    <Button type="button" onClick={handleExport} className="h-[42px] rounded-[14px]">
       Export CSV
-    </button>
+    </Button>
   );
 }

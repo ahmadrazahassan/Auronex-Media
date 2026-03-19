@@ -6,6 +6,7 @@ import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
 import { useState } from "react";
+import type { EditorView } from "@tiptap/pm/view";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -19,7 +20,9 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      // StarterKit already includes the Link extension by default; we disable it here
+      // to avoid the TipTap warning about duplicate `link` extension names.
+      StarterKit.configure({ link: false }),
       Link.configure({ 
         openOnClick: false,
         autolink: true,
@@ -27,20 +30,20 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'rounded-xl border border-[#E2DFD8] my-4 max-w-full h-auto',
+          class: 'rounded-xl border border-white/70 my-4 max-w-full h-auto bg-white/20 backdrop-blur-xl',
         },
         allowBase64: true,
       }),
       Youtube.configure({
         HTMLAttributes: {
-          class: 'w-full aspect-video rounded-xl border border-[#E2DFD8] my-4',
+          class: 'w-full aspect-video rounded-xl border border-white/70 my-4 bg-white/20 backdrop-blur-xl',
         },
       }),
     ],
     content,
     immediatelyRender: false,
     editorProps: {
-      handleDrop: function(view, event, slice, moved) {
+      handleDrop: function(view: EditorView, event: DragEvent) {
         if (!event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files[0]) {
           return false;
         }
@@ -55,7 +58,7 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
 
         return false;
       },
-      handlePaste: function(view, event, slice) {
+      handlePaste: function(view: EditorView, event: ClipboardEvent) {
         if (!event.clipboardData || !event.clipboardData.files || !event.clipboardData.files[0]) {
           return false;
         }
@@ -76,11 +79,8 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
     },
   });
 
-  async function uploadImage(file: File, view: any, clientX?: number, clientY?: number) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const toastId = toast.loading("Uploading image...");
+  async function uploadImage(file: File, view: EditorView, clientX?: number, clientY?: number) {
+    const toastId = toast.loading("Processing image...");
 
     const insertImage = (src: string) => {
       // Insert the image at the cursor position or drop location
@@ -91,16 +91,25 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
           const node = view.state.schema.nodes.image.create({ src });
           const transaction = view.state.tr.insert(pos.pos, node);
           view.dispatch(transaction);
+          return;
         }
       } else {
         // Handle paste (insert at cursor)
         const node = view.state.schema.nodes.image.create({ src });
         const transaction = view.state.tr.replaceSelectionWith(node);
         view.dispatch(transaction);
+        return;
       }
+
+      // Final fallback: insert at selection.
+      const node = view.state.schema.nodes.image.create({ src });
+      const transaction = view.state.tr.replaceSelectionWith(node);
+      view.dispatch(transaction);
     };
 
     const fileToDataUrl = (f: File) => {
+      const MAX_DATA_URL_CHARS = 1_600_000; // keep request payload small enough for `/api/admin/articles`
+
       // Best-effort: try to compress via canvas first, then fall back to raw base64.
       const fallbackToRaw = () =>
         new Promise<string>((resolve, reject) => {
@@ -110,8 +119,8 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
           reader.readAsDataURL(f);
         });
 
-      // Canvas resizing doesn't work for SVG reliably and can be heavy for GIF; keep it simple.
-      if (!f.type.startsWith("image/") || f.type === "image/svg+xml" || f.type === "image/gif") {
+      // Canvas resizing doesn't work for SVG reliably.
+      if (!f.type.startsWith("image/") || f.type === "image/svg+xml") {
         return fallbackToRaw();
       }
 
@@ -122,8 +131,13 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
           const img = new globalThis.Image();
           img.onload = () => {
             try {
-              const maxWidth = 1600;
-              const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+              // Strongly compress to keep the final `data:image/...` HTML small.
+              const maxWidth = 1000;
+              const maxHeight = 1000;
+              const widthScale = img.width > maxWidth ? maxWidth / img.width : 1;
+              const heightScale = img.height > maxHeight ? maxHeight / img.height : 1;
+              const scale = Math.min(widthScale, heightScale, 1);
+
               const targetWidth = Math.max(1, Math.round(img.width * scale));
               const targetHeight = Math.max(1, Math.round(img.height * scale));
 
@@ -135,16 +149,24 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
 
               ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
-              // Convert to JPEG for smaller payloads (except when PNG was explicitly used).
-              const outType = f.type === "image/png" ? "image/png" : "image/jpeg";
-              const dataUrl =
-                outType === "image/jpeg"
-                  ? canvas.toDataURL(outType, 0.85)
-                  : canvas.toDataURL(outType);
+              // Convert to WebP for smaller payloads. Then progressively lower quality
+              // until we hit a rough string-size limit.
+              const outType = "image/webp";
+              const qualitySteps = [0.72, 0.6, 0.48, 0.36, 0.26, 0.2];
+              let dataUrl = canvas.toDataURL(outType, qualitySteps[0]);
+
+              for (const q of qualitySteps) {
+                const candidate = canvas.toDataURL(outType, q);
+                if (candidate.length <= MAX_DATA_URL_CHARS) {
+                  dataUrl = candidate;
+                  break;
+                }
+                dataUrl = candidate; // keep latest best-effort
+              }
 
               URL.revokeObjectURL(objectUrl);
               resolve(dataUrl);
-            } catch (e) {
+            } catch {
               URL.revokeObjectURL(objectUrl);
               fallbackToRaw().then(resolve).catch(reject);
             }
@@ -161,46 +183,18 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
     };
 
     try {
-      const response = await fetch("/api/admin/upload-thumbnail", {
-        method: "POST",
-        body: formData,
-      });
-
-      // Some failures (e.g. 413/HTML error pages) may not return JSON.
-      let result: any = null;
+      // Insert immediately (no server upload) so clipboard paste always works.
+      const dataUrl = await fileToDataUrl(file);
+      insertImage(dataUrl);
+      toast.success("Image inserted.", { id: toastId });
+    } catch {
       try {
-        result = await response.json();
-      } catch {
-        result = null;
-      }
-      
-      if (!response.ok) {
-        // If the server can't accept the upload (auth/size/validation), still insert locally.
-        try {
-          const dataUrl = await fileToDataUrl(file);
-          insertImage(dataUrl);
-          toast.success("Image inserted (upload failed).", { id: toastId });
-        } catch {
-          toast.error(result?.error || "Unable to upload image", { id: toastId });
-        }
-        return;
-      }
-
-      toast.success("Image uploaded", { id: toastId });
-      
-      const url = result?.url;
-      if (!url) throw new Error("No url returned from upload");
-
-      insertImage(String(url));
-    } catch (error) {
-      // Fallback for clipboard paste: if upload fails (size limit, server error, etc.)
-      // insert the image locally using base64 so the editor still works.
-      try {
+        // As a final fallback, still attempt base64 insertion.
         const dataUrl = await fileToDataUrl(file);
         insertImage(dataUrl);
-        toast.success("Image inserted locally (upload failed).", { id: toastId });
+        toast.success("Image inserted.", { id: toastId });
       } catch {
-        toast.error("Failed to upload image", { id: toastId });
+        toast.error("Failed to insert image", { id: toastId });
       }
     }
   }
@@ -208,9 +202,9 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
   if (!editor) return null;
 
   return (
-    <div className="flex flex-col border border-[#E2DFD8] rounded-xl overflow-hidden flex-grow">
+    <div className="flex flex-col border border-white/70 rounded-xl overflow-hidden flex-grow bg-white/50 backdrop-blur-xl">
       {/* Toolbar */}
-      <div className="bg-[#F0EFEB] border-b border-[#E2DFD8] p-2 flex flex-wrap gap-2 items-center justify-between">
+      <div className="bg-white/40 border-b border-white/70 p-2 flex flex-wrap gap-2 items-center justify-between backdrop-blur-xl">
         <div className="flex gap-1">
           <Button
             type="button"

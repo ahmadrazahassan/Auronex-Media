@@ -44,7 +44,10 @@ export function DeleteArticleButton({ articleId }: { articleId: string }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <button type="button" className="p-2 text-[#5A6269] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" />
+          <button
+            type="button"
+            className="p-2 text-[#5A6269] hover:text-red-600 hover:bg-white/60 rounded-lg transition-colors backdrop-blur-xl"
+          />
         }
       >
         <Trash className="w-4 h-4" />
@@ -60,7 +63,7 @@ export function DeleteArticleButton({ articleId }: { articleId: string }) {
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button type="button" onClick={handleDelete} disabled={loading} className="bg-red-600 hover:bg-red-700 text-white">
+          <Button type="button" onClick={handleDelete} disabled={loading} variant="destructive">
             {loading ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
