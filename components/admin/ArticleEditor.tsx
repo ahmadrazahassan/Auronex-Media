@@ -82,38 +82,125 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
 
     const toastId = toast.loading("Uploading image...");
 
+    const insertImage = (src: string) => {
+      // Insert the image at the cursor position or drop location
+      if (clientX !== undefined && clientY !== undefined) {
+        // Handle drop
+        const pos = view.posAtCoords({ left: clientX, top: clientY });
+        if (pos) {
+          const node = view.state.schema.nodes.image.create({ src });
+          const transaction = view.state.tr.insert(pos.pos, node);
+          view.dispatch(transaction);
+        }
+      } else {
+        // Handle paste (insert at cursor)
+        const node = view.state.schema.nodes.image.create({ src });
+        const transaction = view.state.tr.replaceSelectionWith(node);
+        view.dispatch(transaction);
+      }
+    };
+
+    const fileToDataUrl = (f: File) => {
+      // Best-effort: try to compress via canvas first, then fall back to raw base64.
+      const fallbackToRaw = () =>
+        new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(new Error("Failed to read file"));
+          reader.readAsDataURL(f);
+        });
+
+      // Canvas resizing doesn't work for SVG reliably and can be heavy for GIF; keep it simple.
+      if (!f.type.startsWith("image/") || f.type === "image/svg+xml" || f.type === "image/gif") {
+        return fallbackToRaw();
+      }
+
+      return new Promise<string>((resolve, reject) => {
+        try {
+          const objectUrl = URL.createObjectURL(f);
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const maxWidth = 1600;
+              const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+              const targetWidth = Math.max(1, Math.round(img.width * scale));
+              const targetHeight = Math.max(1, Math.round(img.height * scale));
+
+              const canvas = document.createElement("canvas");
+              canvas.width = targetWidth;
+              canvas.height = targetHeight;
+              const ctx = canvas.getContext("2d");
+              if (!ctx) throw new Error("Missing 2d context");
+
+              ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+              // Convert to JPEG for smaller payloads (except when PNG was explicitly used).
+              const outType = f.type === "image/png" ? "image/png" : "image/jpeg";
+              const dataUrl =
+                outType === "image/jpeg"
+                  ? canvas.toDataURL(outType, 0.85)
+                  : canvas.toDataURL(outType);
+
+              URL.revokeObjectURL(objectUrl);
+              resolve(dataUrl);
+            } catch (e) {
+              URL.revokeObjectURL(objectUrl);
+              fallbackToRaw().then(resolve).catch(reject);
+            }
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            fallbackToRaw().then(resolve).catch(reject);
+          };
+          img.src = objectUrl;
+        } catch {
+          fallbackToRaw().then(resolve).catch(reject);
+        }
+      });
+    };
+
     try {
       const response = await fetch("/api/admin/upload-thumbnail", {
         method: "POST",
         body: formData,
       });
 
-      const result = await response.json();
+      // Some failures (e.g. 413/HTML error pages) may not return JSON.
+      let result: any = null;
+      try {
+        result = await response.json();
+      } catch {
+        result = null;
+      }
       
       if (!response.ok) {
-        toast.error(result.error || "Unable to upload image", { id: toastId });
+        // If the server can't accept the upload (auth/size/validation), still insert locally.
+        try {
+          const dataUrl = await fileToDataUrl(file);
+          insertImage(dataUrl);
+          toast.success("Image inserted (upload failed).", { id: toastId });
+        } catch {
+          toast.error(result?.error || "Unable to upload image", { id: toastId });
+        }
         return;
       }
 
       toast.success("Image uploaded", { id: toastId });
       
-      // Insert the image at the cursor position or drop location
-      if (clientX !== undefined && clientY !== undefined) {
-        // Handle drop
-        const pos = view.posAtCoords({ left: clientX, top: clientY });
-        if (pos) {
-          const node = view.state.schema.nodes.image.create({ src: result.url });
-          const transaction = view.state.tr.insert(pos.pos, node);
-          view.dispatch(transaction);
-        }
-      } else {
-        // Handle paste (insert at cursor)
-        const node = view.state.schema.nodes.image.create({ src: result.url });
-        const transaction = view.state.tr.replaceSelectionWith(node);
-        view.dispatch(transaction);
-      }
+      const url = result?.url;
+      if (!url) throw new Error("No url returned from upload");
+
+      insertImage(String(url));
     } catch (error) {
-      toast.error("Failed to upload image", { id: toastId });
+      // Fallback for clipboard paste: if upload fails (size limit, server error, etc.)
+      // insert the image locally using base64 so the editor still works.
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        insertImage(dataUrl);
+        toast.success("Image inserted locally (upload failed).", { id: toastId });
+      } catch {
+        toast.error("Failed to upload image", { id: toastId });
+      }
     }
   }
 
