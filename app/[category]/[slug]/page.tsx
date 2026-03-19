@@ -24,7 +24,7 @@ export default async function ArticlePage({
     ? await getRelatedArticles(article.category_id, article.id, 3)
     : [];
 
-  const safeHtml = DOMPurify.sanitize(article.content);
+  const safeHtml = DOMPurify.sanitize(article.content || "");
   const category = article.category ?? { name: "Uncategorised", slug: categorySlug };
 
   return (

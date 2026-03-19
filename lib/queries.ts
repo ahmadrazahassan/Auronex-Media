@@ -137,9 +137,9 @@ export async function getArticleByCategoryAndSlug(categorySlug: string, slug: st
     .eq("slug", slug)
     .eq("status", "published")
     .not("published_at", "is", null)
-    .single();
+    .maybeSingle();
 
-  if (error) return null;
+  if (error || !data) return null;
   const article = data as ArticleWithCategory;
   if (!article.category || article.category.slug !== categorySlug) return null;
   return article;

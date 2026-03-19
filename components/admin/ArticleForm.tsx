@@ -20,6 +20,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
   const [tags, setTags] = useState(Array.isArray(initialData?.tags) ? initialData.tags.map((tag: { name: string }) => tag.name).join(", ") : "");
   const [metaTitle, setMetaTitle] = useState(initialData?.meta_title || "");
   const [metaDescription, setMetaDescription] = useState(initialData?.meta_description || "");
+  const [publishedAt, setPublishedAt] = useState(initialData?.published_at ? new Date(initialData.published_at).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16));
   const [loading, setLoading] = useState<"draft" | "published" | null>(null);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
@@ -65,6 +66,7 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
       tags: tags.split(",").map((tag: string) => tag.trim()).filter(Boolean),
       meta_title: metaTitle,
       meta_description: metaDescription,
+      published_at: publishedAt ? new Date(publishedAt).toISOString() : null,
       status,
     };
 
@@ -170,7 +172,22 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
           <div className="flex flex-col gap-4 rounded-[26px] border border-white/80 bg-[#F3EFE8] p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.82)]">
             <h3 className="font-display font-bold text-[#0d1619]">Settings</h3>
             
-            <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-3 pb-3 border-b border-white/80">
+              <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-5 w-5 rounded-md border-[#D9D4CB] text-[#037aff] focus:ring-[#037aff] focus:ring-offset-0" />
+              <label htmlFor="featured" className="text-sm font-medium text-[#0d1619] cursor-pointer">Feature this article</label>
+            </div>
+
+            <div className="flex flex-col gap-1.5 mt-1">
+              <label className="text-sm font-medium text-[#0d1619]">Publish Date</label>
+              <input 
+                type="datetime-local" 
+                value={publishedAt}
+                onChange={(e) => setPublishedAt(e.target.value)}
+                className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
+              />
+            </div>
+            
+            <div className="flex flex-col gap-1.5 mt-2">
               <label className="text-sm font-medium text-[#0d1619]">Category</label>
               <select 
                 value={category}
@@ -268,11 +285,6 @@ export function ArticleForm({ initialData = null }: { initialData?: any }) {
                 className="w-full rounded-2xl border border-white/80 bg-white/75 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                 placeholder="SEO description override"
               />
-            </div>
-
-            <div className="mt-4 flex items-center gap-3 border-t border-white/80 pt-5">
-              <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-5 w-5 rounded-md border-[#D9D4CB] text-[#037aff] focus:ring-[#037aff] focus:ring-offset-0" />
-              <label htmlFor="featured" className="text-sm font-medium text-[#0d1619]">Feature this article</label>
             </div>
           </div>
         </div>

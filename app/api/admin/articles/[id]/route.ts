@@ -97,7 +97,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       meta_title: metaTitle,
       meta_description: metaDescription,
       updated_at: new Date().toISOString(),
-      published_at: status === "published" ? new Date().toISOString() : null,
+      published_at: status === "published" ? (body.published_at ? new Date(body.published_at).toISOString() : new Date().toISOString()) : null,
     };
 
     const { error } = await (admin.from("articles") as any).update(payload).eq("id", id);
