@@ -118,7 +118,8 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
       return new Promise<string>((resolve, reject) => {
         try {
           const objectUrl = URL.createObjectURL(f);
-          const img = new Image();
+          // Use the DOM Image constructor (avoid conflict with the imported Tiptap Image extension).
+          const img = new globalThis.Image();
           img.onload = () => {
             try {
               const maxWidth = 1600;
