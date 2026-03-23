@@ -13,7 +13,5 @@ export const CATEGORIES = [
 ];
 
 export const NAV_LINKS = [
-  { name: "Home", href: "/" },
   ...CATEGORIES.map((cat) => ({ name: cat.name, href: `/${cat.slug}` })),
-  { name: "About", href: "/about" },
 ];

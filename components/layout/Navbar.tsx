@@ -73,7 +73,6 @@ export function Navbar() {
               } />
               <SheetContent side="right" className="bg-[#FAF9F6] border-l border-[#E2DFD8] p-6 w-[300px]">
                 <div className="flex flex-col gap-6 mt-8">
-                  <Link href="/" onClick={() => setIsOpen(false)} className="text-lg font-medium text-[#0d1619]">Home</Link>
                   <div className="border-t border-[#E2DFD8] pt-4 flex flex-col gap-3">
                     <span className="text-xs font-semibold text-[#5A6269] uppercase tracking-widest">Topics</span>
                     {CATEGORIES.map((cat) => (
@@ -86,9 +85,6 @@ export function Navbar() {
                         {cat.name}
                       </Link>
                     ))}
-                  </div>
-                  <div className="border-t border-[#E2DFD8] pt-4">
-                    <Link href="/about" onClick={() => setIsOpen(false)} className="text-lg font-medium text-[#0d1619]">About</Link>
                   </div>
                 </div>
               </SheetContent>
