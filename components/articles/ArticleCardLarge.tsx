@@ -27,6 +27,9 @@ export function ArticleCardLarge({ article }: ArticleCardLargeProps) {
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 100vw, 50vw"
+          quality={100}
+          priority
+          loading="eager"
         />
       </Link>
       <div className="p-6 lg:p-8 flex flex-col flex-grow">
