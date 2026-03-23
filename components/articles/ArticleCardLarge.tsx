@@ -26,7 +26,8 @@ export function ArticleCardLarge({ article }: ArticleCardLargeProps) {
           alt={article.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 100vw, 50vw"
+          // Hero section uses 2 columns on large screens; ask for a full-quality width.
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 640px"
           quality={100}
           priority
           loading="eager"

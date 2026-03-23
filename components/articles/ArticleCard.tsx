@@ -20,6 +20,13 @@ interface ArticleCardProps {
 export function ArticleCard({ article, variant = "small" }: ArticleCardProps) {
   const isMedium = variant === "medium";
   const category = article.category ?? { name: "Uncategorised", slug: "bookkeeping-accounting" };
+  // Important: `next/image` uses the `sizes` hint to decide which width to request.
+  // The homepage grids use a max container (`max-w-7xl`) and multiple columns, so
+  // the image request width needs to be closer to the real card width to avoid blur.
+  // Over-requesting a bit is ok for quality; under-requesting is what looks bad.
+  const sizes = isMedium
+    ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+    : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 320px";
 
   return (
     <article className="bg-white rounded-2xl border border-[#E2DFD8] overflow-hidden hover:shadow-md hover:border-[#037aff]/30 transition-all duration-300 flex flex-col h-full group">
@@ -29,7 +36,7 @@ export function ArticleCard({ article, variant = "small" }: ArticleCardProps) {
           alt={article.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          sizes={sizes}
           quality={100}
           priority={variant === "medium"}
           loading={variant === "medium" ? "eager" : "lazy"}

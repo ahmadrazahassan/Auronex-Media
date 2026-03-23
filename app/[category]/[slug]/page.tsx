@@ -67,6 +67,8 @@ export default async function ArticlePage({
               fill
               className="object-cover"
               priority
+              quality={100}
+              sizes="(max-width: 768px) 100vw, 896px"
             />
           </div>
         </header>
