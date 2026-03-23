@@ -13,7 +13,7 @@ export function AdminStatsCards({ stats }: { stats: DashboardStats }) {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]"
+          className="rounded-[26px] border border-[#E2DFD8] bg-white p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)]"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7A838B]">{card.label}</p>
           <p className="mt-4 font-display text-4xl font-bold text-[#0d1619]">{card.value}</p>

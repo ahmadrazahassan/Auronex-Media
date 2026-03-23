@@ -24,15 +24,15 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-[#0d1619] h-screen flex flex-col fixed left-0 top-0 border-r border-[#1a2328]">
+    <aside className="w-64 bg-white h-screen flex flex-col fixed left-0 top-0 border-r border-[#E2DFD8]">
       <div className="p-6">
-        <Link href="/admin" className="flex items-center gap-2 text-[#FAF9F6]">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#FAF9F6]">
+        <Link href="/admin" className="flex items-center gap-2 text-[#0d1619]">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#0d1619]">
             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
             <path d="M8 7h6" />
             <path d="M8 11h4" />
           </svg>
-          <span className="font-display font-bold text-xl tracking-tight">Auronex<span className="font-medium text-[#A0A8B0]">Admin</span></span>
+          <span className="font-display font-bold text-xl tracking-tight">Auronex<span className="font-medium text-[#5A6269]">Admin</span></span>
         </Link>
       </div>
 
@@ -47,8 +47,8 @@ export function AdminSidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
                 isActive 
-                  ? "bg-[#037aff]/10 text-[#037aff]" 
-                  : "text-[#A0A8B0] hover:text-white hover:bg-[#1a2328]"
+                  ? "bg-[#FAF9F6] text-[#0d1619] border border-[#E2DFD8]" 
+                  : "text-[#5A6269] hover:text-[#0d1619] hover:bg-[#FAF9F6]"
               )}
             >
               <Icon className="w-5 h-5" />
@@ -58,7 +58,7 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-[#1a2328]">
+      <div className="p-4 border-t border-[#E2DFD8]">
         <AdminAuthButton />
       </div>
     </aside>

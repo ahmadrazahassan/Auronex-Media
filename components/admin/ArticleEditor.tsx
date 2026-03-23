@@ -30,13 +30,13 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'rounded-xl border border-white/70 my-4 max-w-full h-auto bg-white/20 backdrop-blur-xl',
+          class: 'rounded-xl border border-[#E2DFD8] my-4 max-w-full h-auto bg-white',
         },
         allowBase64: true,
       }),
       Youtube.configure({
         HTMLAttributes: {
-          class: 'w-full aspect-video rounded-xl border border-white/70 my-4 bg-white/20 backdrop-blur-xl',
+          class: 'w-full aspect-video rounded-xl border border-[#E2DFD8] my-4 bg-white',
         },
       }),
     ],
@@ -202,9 +202,9 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
   if (!editor) return null;
 
   return (
-    <div className="flex flex-col border border-white/70 rounded-xl overflow-hidden flex-grow bg-white/50 backdrop-blur-xl">
+    <div className="flex flex-col border border-[#E2DFD8] rounded-xl overflow-hidden flex-grow bg-white">
       {/* Toolbar */}
-      <div className="bg-white/40 border-b border-white/70 p-2 flex flex-wrap gap-2 items-center justify-between backdrop-blur-xl">
+      <div className="bg-[#FAF9F6] border-b border-[#E2DFD8] p-2 flex flex-wrap gap-2 items-center justify-between">
         <div className="flex gap-1">
           <Button
             type="button"

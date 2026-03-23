@@ -87,7 +87,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
 
   return (
     <form onSubmit={(e) => handleSubmit(e, "published")} className="flex flex-col gap-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 rounded-[26px] border border-[#E2DFD8] bg-white p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)]">
         <div>
           <h2 className="font-display font-bold text-xl text-[#0d1619]">
             {initialData ? "Edit Article" : "New Article"}
@@ -115,14 +115,14 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content Area */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="flex flex-col gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
+          <div className="flex flex-col gap-4 rounded-[26px] border border-[#E2DFD8] bg-white p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)]">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-[#0d1619]">Title</label>
               <input 
                 type="text" 
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-lg font-display shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-lg font-display shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                 placeholder="Enter article title..."
                 required
               />
@@ -134,7 +134,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 rows={3}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                 placeholder="2-3 sentence summary..."
               />
             </div>
@@ -145,15 +145,15 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
                 type="text"
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                 placeholder="Editorial Team"
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)] min-h-[500px]">
+          <div className="flex flex-col gap-4 rounded-[26px] border border-[#E2DFD8] bg-white p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)] min-h-[500px]">
             <label className="text-sm font-medium text-[#0d1619]">Content</label>
-            <div className="flex-grow rounded-2xl border border-white/70 bg-white/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition-all focus-within:border-[#037aff] focus-within:bg-white/60 focus-within:ring-4 focus-within:ring-[#037aff]/10 overflow-hidden backdrop-blur-xl">
+            <div className="flex-grow rounded-2xl border border-[#E2DFD8] bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all focus-within:border-[#037aff] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#037aff]/10 overflow-hidden">
               <ArticleEditor content={content} onChange={setContent} />
             </div>
           </div>
@@ -161,11 +161,11 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
 
         {/* Sidebar Settings */}
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-4 rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
+          <div className="flex flex-col gap-4 rounded-[26px] border border-[#E2DFD8] bg-white p-6 shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)]">
             <h3 className="font-display font-bold text-[#0d1619]">Settings</h3>
             
             <div className="flex items-center gap-3 pb-3 border-b border-white/70">
-              <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-5 w-5 rounded-md border-white/70 bg-white/50 text-[#037aff] focus:ring-[#037aff] focus:ring-offset-0 backdrop-blur-xl" />
+              <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-5 w-5 rounded-md border-[#E2DFD8] bg-white text-[#037aff] focus:ring-[#037aff] focus:ring-offset-0" />
               <label htmlFor="featured" className="text-sm font-medium text-[#0d1619] cursor-pointer">Feature this article</label>
             </div>
 
@@ -175,7 +175,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
                 type="datetime-local" 
                 value={publishedAt}
                 onChange={(e) => setPublishedAt(e.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
               />
             </div>
             
@@ -184,7 +184,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
               <select 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all appearance-none focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all appearance-none focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
               >
                 {CATEGORIES.map(cat => (
                   <option key={cat.slug} value={cat.slug}>{cat.name}</option>
@@ -199,7 +199,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
                   type="text"
                   value={thumbnailUrl}
                   onChange={(e) => setThumbnailUrl(e.target.value)}
-                  className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                  className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                   placeholder="https://example.com/image.png"
                 />
               </div>
@@ -226,7 +226,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
                 type="text"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                 placeholder="tax, payroll, software"
               />
               <span className="text-xs text-[#5A6269]">Separate tags with commas.</span>
@@ -238,7 +238,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
                 type="text"
                 value={metaTitle}
                 onChange={(e) => setMetaTitle(e.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                 placeholder="SEO title override"
               />
             </div>
@@ -249,7 +249,7 @@ export function ArticleForm({ initialData = null }: { initialData?: ArticleFormI
                 value={metaDescription}
                 onChange={(e) => setMetaDescription(e.target.value)}
                 rows={4}
-                className="w-full rounded-2xl border border-white/70 bg-white/50 px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white/60 focus:ring-4 focus:ring-[#037aff]/10 backdrop-blur-xl"
+                className="w-full rounded-2xl border border-[#E2DFD8] bg-white px-4 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition-all resize-none placeholder:text-[#A0A8B0] focus:border-[#037aff] focus:bg-white focus:ring-4 focus:ring-[#037aff]/10"
                 placeholder="SEO description override"
               />
             </div>

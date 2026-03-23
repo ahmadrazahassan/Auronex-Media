@@ -3,27 +3,27 @@ import type { Subscriber } from "@/types";
 
 export function AdminSubscribersTable({ subscribers }: { subscribers: Subscriber[] }) {
   return (
-    <div className="overflow-hidden rounded-[26px] border border-white/70 bg-white/50 backdrop-blur-xl shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.85)]">
+    <div className="overflow-hidden rounded-[26px] border border-[#E2DFD8] bg-white shadow-[0_10px_24px_rgba(13,22,25,0.04),inset_0_1px_0_rgba(255,255,255,0.9)]">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-white/80 bg-white/60">
+            <tr className="border-b border-[#E2DFD8] bg-white">
               <th className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#7A838B]">Email</th>
               <th className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#7A838B]">Status</th>
               <th className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#7A838B]">Date Joined</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/70">
+          <tbody className="divide-y divide-[#E2DFD8]">
             {subscribers.map((subscriber) => (
-              <tr key={subscriber.id} className="transition-colors hover:bg-white/45">
+              <tr key={subscriber.id} className="transition-colors hover:bg-[#FAF9F6]">
                 <td className="px-6 py-4 text-sm font-medium text-[#0d1619]">{subscriber.email}</td>
                 <td className="px-6 py-4">
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${
                       subscriber.subscribed
-                        ? "border border-[#D7EEDA] bg-white/50 text-[#2D7A39]"
-                        : "border border-[#F1E0BD] bg-white/50 text-[#9A6B15]"
-                    } backdrop-blur-xl`}
+                        ? "border border-[#D7EEDA] bg-white text-[#2D7A39]"
+                        : "border border-[#F1E0BD] bg-white text-[#9A6B15]"
+                    }`}
                   >
                     {subscriber.subscribed ? "Subscribed" : "Unsubscribed"}
                   </span>
