@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { AppChrome } from "@/components/layout/AppChrome";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const workSans = Work_Sans({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default function RootLayout({
           <AppChrome>{children}</AppChrome>
           <Toaster position="top-right" />
         </TooltipProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
